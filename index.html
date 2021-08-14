@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<!-- Stylesheets -->
+		<link rel="stylesheet" href="css/custom.css">
+		<link rel="stylesheet" href="css/responsive.css">
+		
+		<!-- scripts -->
+		<script src="js/jquery.min.js"></script>
+		
+		<title>space-home</title>
+	</head>
+	<body>
+	<div class="container">
+		<header>
+			<h1>SpaceX Launch Programs</h1>
+		</header>
+		<div class="row">
+			<div class="col-1 filters">
+				<div>
+					<h2>Filters</h2>
+					<div class="launch-year">
+						<h3>Launch Year</h3>
+						<div>
+							
+								<button class="launch_year" value="2006" onclick="filter(this)">2006</button>
+								<button class="launch_year" value="2007" onclick="filter(this)">2007</button>
+								<button class="launch_year" value="2008" onclick="filter(this)">2008</button>
+								<button class="launch_year" value="2009" onclick="filter(this)">2009</button>
+								<button class="launch_year" value="2010" onclick="filter(this)">2010</button>
+								<button class="launch_year" value="2011" onclick="filter(this)">2011</button>
+								<button class="launch_year" value="2012" onclick="filter(this)">2012</button>
+								<button class="launch_year" value="2013" onclick="filter(this)">2013</button>
+								<button class="launch_year" value="2014" onclick="filter(this)">2014</button>
+								<button class="launch_year" value="2015" onclick="filter(this)">2015</button>
+								<button class="launch_year" value="2016" onclick="filter(this)">2016</button>
+								<button class="launch_year" value="2017" onclick="filter(this)">2017</button>
+								<button class="launch_year" value="2018" onclick="filter(this)">2018</button>
+								<button class="launch_year" value="2019" onclick="filter(this)">2019</button>
+								<button class="launch_year" value="2020" onclick="filter(this)">2020</button>
+							
+						</div>
+					</div>
+					<div class="successful-launch">
+						<h3>Successful Launch</h3>
+							<div>
+								<button class="launch_success" value="true" onclick="filter(this)">True</button>
+								<button class="launch_success" value="false" onclick="filter(this)">False</button>
+							</div>
+					</div>
+					<div class="successful-land">
+						<h3>Successful Landing</h3>
+							<div>
+								<button class="land_success" value="true" onclick="filter(this)">True</button>
+								<button class="land_success" value="false" onclick="filter(this)">False</button>
+							</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="program-list" id="programs">
+			  </div> 
+		</div>
+
+	</div>	
+	<script type="text/javascript">
+		var URL  = "https://api.spaceXdata.com/v3/launches?limit=100";
+		window.onload = fetchData("https://api.spaceXdata.com/v3/launches?limit=100");
+		function fetchData(url) {
+			fetch(url)
+			.then((resp) => resp.json())
+			.then(function (data){
+				var programList = document.getElementById("programs");
+						const markup = `
+								${data.map(d => `<div class="col-1">
+													<div class="program">
+														<img src="${d.links.mission_patch}" alt="program-image">
+														<h3 class="color-blue"> ${d.mission_name} # ${d.flight_number}</h3>
+														<p><b>Mission Ids:</b></p>
+														<ul  class="color-blue">
+															<li>${d.mission_id[0]}</li>
+															<li>${d.mission_id[1]}</li>
+														<ul>
+														<p class="color-blue"><b class="color-black">Launch Year:</b>${d.launch_year}</p>
+														<p class="color-blue"><b class="color-black">Successful Launch:</b>${d.launch_success}</p>
+														<p class="color-blue"><b class="color-black">Successful Landing:</b>${d.rocket.first_stage.cores[0].land_success}</p>
+													</div>
+												</div>`).join('')}
+							`;
+					document.getElementById("programs").innerHTML = markup;
+			});
+		}	
+				
+		function filter(val){
+		var key = val.getAttribute("class");
+		var value = val.value;
+		var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+	    var separator = URL.indexOf('?') !== -1 ? "&" : "?";
+		  if (URL.match(re)) {
+			URL= URL.replace(re, '$1' + key + "=" + value + '$2');
+		  }
+		  else {
+			URL = URL + separator + key + "=" + value;
+		  }
+		fetchData(URL);
+		$(val).addClass('selected')
+        .siblings().removeClass('selected')
+		console.log (URL);
+		}
+	</script>
+	</body>
+</html>	
